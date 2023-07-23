@@ -1,0 +1,54 @@
+---
+title: "weights check"
+author: "Gianluca Blaco"
+date: "11/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### weight check
+
+```{r}
+data <- read_csv("input/clean_data.csv")
+population <- read_csv("input/sampling_frame.csv")
+names(population)
+```
+
+```{r}
+names(data)[names(data) == "stratification"] <- "strata.names"
+names(population)[names(population) == "strata.names"] <- "strata.names"
+names(population)[names(population) == "population"] <- "population"
+```
+
+
+```{r}
+sampling <- data %>% group_by(strata.names)%>%summarise(sample = n()) 
+population<- population%>%group_by(strata.names)%>%summarise(population = sum(population),)
+#sampling <- data %>% group_by(province_label,pop_group_final)%>%summarise(sample = n()) 
+#sampling$strata <- paste(sampling$province_label, sampling$pop_group_final, sep= " - ")
+```
+
+```{r}
+#strata were no sampling was collected
+check1 <- anti_join(population,sampling, by=c("strata.names") )
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+#join sampling and population
+
+sampling_frame <- left_join(population,sampling, by=c("strata.names") )
+sampling_frame<- sampling_frame%>%filter(strata.names%!in%check1$strata.names)
+
+sampling_frame<- sampling_frame%>%select(strata.names,population,sample) %>% mutate(sample=replace(sample, is.na(sample), "0"))%>%mutate(tot_pop = sum(population),tot_sample = sum(as.numeric(sample)))%>%mutate(weight=(population/tot_pop)/(as.numeric(sample)/tot_sample))
+```
+
+#compare weights used with weights we just calculated
+```{r}
+weights_data <- data%>%group_by(strata.names,weight)%>%summarise(n())%>%left_join(sampling_frame, by = c("strata.names"))
+```
+#if not add weights column to the dataset
+```{r}
+weights_data <- sampling_frame%>%select(strata.names, weight)%>%right_join(data, by = c("strata.names"))
+```
