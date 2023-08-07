@@ -39,7 +39,7 @@ file.remove("outputs/dataset_with_check.xlsx", "outputs/review_cleaning_part2.xl
 ```{r, message = F, warning = F}
 library(readxl)
 #The only section that should be changed.
-file <- "C:/Users/lisa.reiners/OneDrive - ACTED/Documents/REG2302/Panama/inputs/PANAMA_Research_cycle_data_cleaning_HQ.xlsx"
+file <- XXX
 
 raww <- read_excel(file, guess = 10000, sheet = "Raw_Data")
 

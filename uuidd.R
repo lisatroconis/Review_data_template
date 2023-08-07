@@ -1,7 +1,7 @@
 library(readxl)
 
 #The only section that should be changed.
-file <- "C:/Users/lisa.reiners/OneDrive - ACTED/Documents/IRQ2301/review_template/inputs/IRQ2301_Winter_cash_assistance_dataset.xlsx"
+file <- XXX
 raww <- read_excel(file, guess = 10000, sheet = "Raw Data")
 cleann <- read_excel(file, guess = 10000, sheet = "Clean Data")
 logg <- read_excel(file, guess = 50000,sheet = "Cleaning Log")
